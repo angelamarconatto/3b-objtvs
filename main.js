@@ -1,57 +1,48 @@
 const botoes = document.querySelectorAll(".botao");
-console.log(botoes);
-const botoes = document.querySelectorAll(".botao");
-
-for (let i = 0; i < botoes.length; i++) {
-  botoes[i].onclick = function () {
-    for (let j = 0; j < botoes.length; j++) {
-      botoes[j].classList.remove("ativo");
-    }
-    botoes[i].classList.add("ativo");
-  };
-}
-const botoes = document.querySelectorAll(".botao");
-const textos = document.querySelectorAll(".aba-conteudo");
-
-for (let i = 0; i < botoes.length; i++) {
-    botoes[i].onclick = function() {
-        for (let j = 0; j < botoes.length; j++) {
-            botoes[j].classList.remove("ativo");
-            textos[j].classList.remove("ativo");
-        }
-        botoes[i].classList.add("ativo");
-        textos[i].classList.add("ativo");
-    }
-}
+const abas = document.querySelectorAll(".aba");
 const contadores = document.querySelectorAll(".contador");
-const tempoObjetivo1 = new Date("2024-10-05T00:00:00");
-let tempoAtual = new Date();
-contadores[0].textContent = tempoObjetivo1 - tempoAtual;
 
-function calculaTempo(tempoObjetivo){
-    let tempoAtual = new Date();
-    let tempoFinal = tempoObjetivo - tempoAtual;
-
-    let segundos = Math.floor(tempoFinal / 1000);
-    let minutos = Math.floor(segundos / 60);
-    let horas = Math.floor(minutos / 60);
-    let dias = Math.floor(horas / 24);
-
-    segundos %= 60;
-    minutos %= 60;
-    horas %= 24;
-
-    return dias + " Dias " + horas + " Horas " + minutos + " Minutos " + segundos + " Segundos";
-}
-
-const contadores = document.querySelectorAll(".contador");
-const tempoObjetivo1 = new Date("2024-02-19T00:00:00");
-const tempoObjetivo2 = new Date("2024-03-22T00:00:00");
-const tempoObjetivo3 = new Date("2024-11-05T00:00:00");
-const tempoObjetivo4 = new Date("2025-06-06T00:00:00");
+// Datas futuras das metas
+const tempoObjetivo1 = new Date("2025-12-31T23:59:59");
+const tempoObjetivo2 = new Date("2025-06-30T23:59:59");
+const tempoObjetivo3 = new Date("2025-09-01T00:00:00");
+const tempoObjetivo4 = new Date("2025-11-15T00:00:00");
 
 const tempos = [tempoObjetivo1, tempoObjetivo2, tempoObjetivo3, tempoObjetivo4];
 
-for (let i = 0; i < contadores.length; i++) {
-    contadores[i].textContent = calculaTempo(tempos[i]);
+botoes.forEach((botao, indice) => {
+  botao.addEventListener("click", () => {
+    // Remove a classe 'ativo' de todos os botões
+    botoes.forEach(botao => botao.classList.remove("ativo"));
+    // Adiciona a classe no botão clicado
+    botao.classList.add("ativo");
+
+    // Troca as abas
+    abas.forEach(aba => aba.classList.remove("ativa"));
+    abas[indice].classList.add("ativa");
+  });
+});
+
+// Atualiza os contadores a cada segundo
+function atualizarContadores() {
+  const agora = new Date();
+
+  contadores.forEach((contador, indice) => {
+    const tempoFinal = tempos[indice];
+    const tempoRestante = tempoFinal - agora;
+
+    if (tempoRestante > 0) {
+      const dias = Math.floor(tempoRestante / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((tempoRestante / (1000 * 60 * 60)) % 24);
+      const minutos = Math.floor((tempoRestante / (1000 * 60)) % 60);
+      const segundos = Math.floor((tempoRestante / 1000) % 60);
+
+      contador.innerHTML = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+    } else {
+      contador.innerHTML = "Meta encerrada!";
+    }
+  });
 }
+
+atualizarContadores();
+setInterval(atualizarContadores, 1000);
